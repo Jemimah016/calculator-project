@@ -7,8 +7,9 @@ const equalsButton = document.querySelector(".equals");
 const clearButton = document.querySelector(".clear");
 
 let firstNumber = "";
-let operator = "";
 let secondNumber = "";
+let operator = "";
+let isSecondNumber = false;
 
 // Math functions
 function add(a, b) {
@@ -24,16 +25,12 @@ function multiply(a, b) {
 }
 
 function divide(a, b) {
-  if (b === 0) {
-    return "Error";
-  }
-
+  if (b === 0) return "Error";
   return a / b;
 }
 
-// Operate
+// Operate function
 function operate(operator, a, b) {
-
   a = Number(a);
   b = Number(b);
 
@@ -52,50 +49,79 @@ function operate(operator, a, b) {
   }
 }
 
-// Number buttons
+// NUMBER BUTTONS
 numberButtons.forEach((button) => {
 
   button.addEventListener("click", () => {
 
-    if (display.textContent === "0") {
-      display.textContent = "";
+    if (!isSecondNumber) {
+
+      firstNumber += button.textContent;
+
+      display.textContent = firstNumber;
+
+    } else {
+
+      secondNumber += button.textContent;
+
+      display.textContent =
+        firstNumber + " " + operator + " " + secondNumber;
     }
 
-    display.textContent += button.textContent;
   });
 
 });
 
-// Operator buttons
+// OPERATOR BUTTONS
 operatorButtons.forEach((button) => {
 
   button.addEventListener("click", () => {
 
-    firstNumber = display.textContent;
+    if (firstNumber === "") return;
 
     operator = button.textContent;
 
-    display.textContent = "";
+    isSecondNumber = true;
+
+    display.textContent =
+      firstNumber + " " + operator;
+
   });
 
 });
 
-// Equals button
+// EQUALS BUTTON
 equalsButton.addEventListener("click", () => {
 
-  secondNumber = display.textContent;
+  if (
+    firstNumber === "" ||
+    secondNumber === "" ||
+    operator === ""
+  ) {
+    return;
+  }
 
-  const result = operate(operator, firstNumber, secondNumber);
+  let result = operate(operator, firstNumber, secondNumber);
+
+  result = Math.round(result * 1000) / 1000;
 
   display.textContent = result;
+
+  firstNumber = result.toString();
+  secondNumber = "";
+  operator = "";
+  isSecondNumber = false;
+
 });
 
-// Clear button
+// CLEAR BUTTON
 clearButton.addEventListener("click", () => {
 
   firstNumber = "";
   secondNumber = "";
   operator = "";
+  isSecondNumber = false;
 
   display.textContent = "0";
+
 });
